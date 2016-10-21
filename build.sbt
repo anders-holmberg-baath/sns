@@ -9,7 +9,7 @@ assemblyJarName in assembly := s"sns-${version.value}.jar"
 test in assembly := {}
 
 libraryDependencies ++= {
-  val akkaVersion = "2.4.9"
+  val akkaVersion = "2.4.11"
   val camelVersion = "2.17.0"
 
   Seq(
