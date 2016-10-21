@@ -6,6 +6,7 @@ import akka.actor.Status.{Failure, Success}
 import akka.actor.{Actor, ActorLogging, ActorRef, Props}
 import me.snov.sns.actor.DbActor.CmdGetConfiguration
 import me.snov.sns.model.{Configuration, Message, Subscription, Topic}
+import akka.camel.CamelMessage
 
 object SubscribeActor {
   def props(dbActor: ActorRef) = Props(classOf[SubscribeActor], dbActor)
@@ -43,7 +44,7 @@ class SubscribeActor(dbActor: ActorRef) extends Actor with ActorLogging {
         subscriptions.get(topicArn).get.foreach((s: Subscription) => {
           if (actorPool.isDefinedAt(s)) {
             log.debug(s"Sending message ${message.uuid} to ${s.endpoint}")
-            actorPool(s) ! message.body
+            actorPool(s) ! CamelMessage(message.body, Map("id" -> message.uuid))
           } else {
             throw new RuntimeException(s"No actor for subscription ${s.endpoint}")
           }
